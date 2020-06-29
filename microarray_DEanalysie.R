@@ -83,3 +83,17 @@ ggplot(res_tableOE_ordered) +
         plot.title = element_text(size = rel(1.5), hjust = 0.5),
         axis.title = element_text(size = rel(1.25)))  
 
+
+
+library(EnhancedVolcano)
+##set gene label
+## Sort by ordered adj.P.Val
+res_tableOE_ordered <- sigout[order(sigout$adj.P.Val), ] 
+## Create a column to indicate which genes to label
+res_tableOE_ordered$genelabels <- ""
+res_tableOE_ordered$genelabels[1:10] <- rownames(res_tableOE_ordered)[1:10]
+View(res_tableOE_ordered)
+s_genes <- c('abo', 'Ace')
+EnhancedVolcano(res_tableOE_ordered,
+                'logFC', y = 'adj.P.Val',
+                lab = res_tableOE_ordered$genelabels)
