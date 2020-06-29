@@ -72,7 +72,6 @@ sigout=output[output$adj.P.Val<0.05,]
 
 
 # I specify coef=2 because we are interested in the difference between groups, not the intercept.
-t <- topTable(fit, coef=2, n=nrow(my.second.sub), adjust='BH') #the report, adjustment is optional
 
 
 ## heatmap
@@ -87,10 +86,6 @@ colnames(dismat) = namelist
 pheatmap(dismat, annotation_col = annotation_col,show_rownames=F,main = 'hierarchical clustering heatmap before normalization')
 
 
-## volcano plot
-p<-ggplot(sigout,aes(x=logFC,y=adj.P.Val))
-p<-p+geom_point()+ ggtitle("logFC VS. adj.P.Val")
-p
 
 ##violinplot
 library(ggplot2)
