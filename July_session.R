@@ -1,5 +1,5 @@
 #read in cel file
-normal_cels='/restricted/projectnb/camplab/home/jia_liu/stemaway_folder/stemaway/unzipdata'
+normal_cels='/stemaway/unzipdata'
 affy_norm = ReadAffy(celfile.path=normal_cels)
 
 #normalization
