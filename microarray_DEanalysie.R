@@ -13,9 +13,9 @@ table=na.omit(Sym_ID2)
 
 # make a dataframe contains gene expression, probeid and annotation
 ind <- match(rownames(affy_matrix), table$PROBEID)
-probeid=rownames(affy_matrix)
+probeid <- rownames(affy_matrix)
 ge <- as.data.frame(affy_matrix)
-ge$probeid=probeid
+ge$probeid <- probeid
 ge$Gene_Symbol <- table$SYMBOL[ind]
 
 # drop duplicated rows
@@ -24,13 +24,13 @@ annot_gene<-ge[!duplicated(ge$Gene_Symbol), ]
 
 
 #######filtering lowest 4% genes
-aa=annot_gene[,1:34]
-annot_gene$gesum=rowSums(aa)
+aa <- annot_gene[,1:34]
+annot_gene$gesum <- rowSums(aa)
 library(genefilter)
-lowthre=quantile(annot_gene$gesum,0.04)
-filt_gene=annot_gene[which(annot_gene$gesum>lowthre),]
-filt_gene=na.omit(filt_gene)
-filt_matrix=filt_gene[,1:34]
+lowthre <- quantile(annot_gene$gesum,0.04)
+filt_gene <- annot_gene[which(annot_gene$gesum>lowthre),]
+filt_gene <- na.omit(filt_gene)
+filt_matrix <- filt_gene[,1:34]
 rownames(filt_matrix)<-filt_gene$Gene_Symbol
 
 #######use limma to do filtering
