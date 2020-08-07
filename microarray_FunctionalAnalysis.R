@@ -10,8 +10,8 @@ geneList <- sigout$logFC
 #geneList <- data[,2]
 
 ## feature 2: named vector
-aa=rownames(sigout)
-bb=as.character(aa)
+aa <- rownames(sigout)
+bb <- as.character(aa)
 names(geneList) <- bb
 
 ## feature 3: decreasing order
@@ -26,7 +26,7 @@ head(gene.df,2)
 
 ######################3.1: GO analysis
 ggo <- groupGO(gene = gene.df$ENTREZID,keyType = 'ENTREZID', OrgDb = org.Hs.eg.db, ont = "CC",level = 5,readable = TRUE)
-aa=setReadable(ggo, OrgDb = org.Hs.eg.db)
+aa <- setReadable(ggo, OrgDb = org.Hs.eg.db)
 barplot(aa)
 #####################3.2 enrichGo analysis
 ego_ALL <- enrichGO(gene = bb, 
@@ -87,11 +87,11 @@ aa=setReadable(ewp, OrgDb = org.Hs.eg.db, keyType='ENTREZID')
 barplot(aa)
 
 
-aa=sigout$logFC
-bb=as.character(gene.df$ENTREZID)
+aa <- sigout$logFC
+bb <- as.character(gene.df$ENTREZID)
 names(aa) <- bb
 aa <- sort(aa, decreasing = TRUE)
 ewp2 <- GSEA(aa, TERM2GENE = wpid2gene, TERM2NAME = wpid2name, verbose=FALSE)
-bb=setReadable(ewp2, OrgDb = org.Hs.eg.db, keyType='ENTREZID')
+bb <- setReadable(ewp2, OrgDb = org.Hs.eg.db, keyType='ENTREZID')
 saveRDS(bb)
 
