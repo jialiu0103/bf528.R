@@ -10,7 +10,7 @@ library(gridExtra)
 
 
 ##readin dataset
-normal_cels='/projectnb/bf528/users/group4/others/stemaway_17dataset'
+normal_cels='/others/stemaway_17dataset'
 affy_norm = ReadAffy(celfile.path=normal_cels)
 
 
@@ -58,7 +58,7 @@ p
 ##use limma to analyse gene expression differences
 library(limma)
 #library(edgeR)
-affy_matrix=exprs(norm_arry)
+affy_matrix <- exprs(norm_arry)
 #group <- factor(c(rep("cancer",17), rep("control",18)))
 design <- model.matrix(~group)
 colnames(design) <- levels(group)
@@ -79,10 +79,10 @@ library(pheatmap)
 #affy_matrix=log(affy_matrix)
 coln=colnames(affy_matrix)
 dismat <- 1-cor(affy_matrix)
-nm=factor(c(rep("control",17), rep("cancer",17)))
-annotation_col = data.frame(SampleType = nm)
-rownames(annotation_col) = namelist
-colnames(dismat) = namelist
+nm <- factor(c(rep("control",17), rep("cancer",17)))
+annotation_col <- data.frame(SampleType = nm)
+rownames(annotation_col) <- namelist
+colnames(dismat) <- namelist
 pheatmap(dismat, annotation_col = annotation_col,show_rownames=F,main = 'hierarchical clustering heatmap before normalization')
 
 
