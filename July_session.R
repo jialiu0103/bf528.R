@@ -1,14 +1,14 @@
 #read in cel file
 normal_cels='/stemaway/unzipdata'
-affy_norm = ReadAffy(celfile.path=normal_cels)
+affy_norm <- ReadAffy(celfile.path=normal_cels)
 
 #normalization
 norm_arry <- rma(affy_norm)
-norm_matrix=exprs(norm_arry)
-matrix=norm_matrix[,1:98]
+norm_matrix <- exprs(norm_arry)
+matrix <- norm_matrix[,1:98]
 
 #read in metadata
-meta=as.data.frame(metadata)
+meta <- as.data.frame(metadata)
 View(meta)
 
 #batch correction 
@@ -23,13 +23,13 @@ library(ggplot2)
 library(grid)
 library(gridExtra)
 
-before=exprs(affy_norm)
-before=before[,1:98]
+before <- exprs(affy_norm)
+before <- before[,1:98]
 #matrix
 #before=matrix
 colnames(before) <- factor(meta$CN)
-ta=t(before)
-ta=log(ta)
+ta <- t(before)
+ta <- log(ta)
 df_pca <- prcomp(ta,center = F, scale. = F)
 df_out <- as.data.frame(df_pca$x)
 group <- factor(meta$CN)
@@ -40,29 +40,29 @@ ggplot(df_out,aes(x=PC1,y=PC2,label= sample_lab),size=5) +
   ggtitle("PCA before normalization")
 
 #pca before batch correction (after normalization)
-before=matrix
+before <- matrix
 colnames(before) <- factor(meta$CN)
-ta=t(before)
-ta=log(ta)
+ta <- t(before)
+ta <- log(ta)
 df_pca <- prcomp(ta,center = F, scale. = F)
 df_out <- as.data.frame(df_pca$x)
 group <- factor(meta$CN)
-sample_lab=meta$`!Sample_geo_accession`
+sample_lab <- meta$`!Sample_geo_accession`
 
 ggplot(df_out,aes(x=PC1,y=PC2,label= sample_lab),size=5) + 
   geom_point(aes(color=group)) +geom_text(hjust=-0.1,vjust=0.1,size=2) +
   ggtitle("PCA before batch correction")
 
 #pca after normalization and batch correction
-after=combat_norm_matrix
+after <- combat_norm_matrix
 colnames(after) <- factor(meta$CN)
-ta=t(after)
-ta=log(ta)
+ta <- t(after)
+ta <- log(ta)
 df_pca <- prcomp(ta,center = F, scale. = F)
 df_out <- as.data.frame(df_pca$x)
 group <- factor(meta$CN)
-sample_lab=meta$`!Sample_geo_accession`
-namelist=colnames(before)
+sample_lab <- meta$`!Sample_geo_accession`
+namelist <- colnames(before)
 
 ggplot(df_out,aes(x=PC1,y=PC2,label= sample_lab),size=1) + 
   geom_point(aes(color=group)) +geom_text(hjust=-0.1,vjust=0.1,size=2) + 
@@ -70,23 +70,23 @@ ggplot(df_out,aes(x=PC1,y=PC2,label= sample_lab),size=1) +
 
 #heatmap before batch correction
 library(pheatmap)
-before=matrix
+before <- matrix
 colnames(before) <- factor(meta$CN)
-coln=colnames(before)
+coln <- colnames(before)
 dismat <- 1-cor(before)
-nm=colnames(before)
-annotation_col = data.frame(SampleType = nm)
-rownames(annotation_col) = sample_lab
-colnames(dismat) = sample_lab
+nm <- colnames(before)
+annotation_col <- data.frame(SampleType = nm)
+rownames(annotation_col) <- sample_lab
+colnames(dismat) <- sample_lab
 pheatmap(dismat, annotation_col = annotation_col,show_rownames=F,main = 'hierarchical clustering heatmap before batch correction (after normalization)')
 
 #heatmap after
-coln=colnames(after)
+coln <- colnames(after)
 dismat <- 1-cor(after)
-nm=colnames(after)
-annotation_col = data.frame(SampleType = nm)
-rownames(annotation_col) = sample_lab
-colnames(dismat) = sample_lab
+nm <- colnames(after)
+annotation_col <- data.frame(SampleType = nm)
+rownames(annotation_col) <- sample_lab
+colnames(dismat) <- sample_lab
 pheatmap(dismat, annotation_col = annotation_col,show_rownames=F,main = 'hierarchical clustering heatmap after batch correction')
 
 
@@ -102,13 +102,13 @@ keytypes(x)
 # Map Probe IDs to Gene Symbols
 cols <- c("SYMBOL", "GENENAME")
 Sym_ID2 <- AnnotationDbi::select(x, keys=as.character(rownames(combat_norm_matrix)), columns='SYMBOL')
-table=na.omit(Sym_ID2)
+table <- na.omit(Sym_ID2)
 
 # make a dataframe contains gene expression, probeid and annotation
 ind <- match(rownames(combat_norm_matrix), table$PROBEID)
-probeid=rownames(combat_norm_matrix)
+probeid <- rownames(combat_norm_matrix)
 ge <- as.data.frame(combat_norm_matrix)
-ge$probeid=probeid
+ge$probeid <- probeid
 ge$Gene_Symbol <- table$SYMBOL[ind]
 
 # drop duplicated rows
@@ -117,13 +117,14 @@ annot_gene<-ge[!duplicated(ge$Gene_Symbol), ]
 
 
 #######filtering lowest 4% genes
-aa=annot_gene[,1:98]
-annot_gene$gesum=rowSums(aa)
+aa <- annot_gene[,1:98]
+head(aa)
+annot_gene$gesum <- rowSums(aa)
 #library(genefilter)
-lowthre=quantile(annot_gene$gesum,0.04)
-filt_gene=annot_gene[which(annot_gene$gesum>lowthre),]
-filt_gene=na.omit(filt_gene)
-filt_matrix=filt_gene[,1:98]
+lowthre <- quantile(annot_gene$gesum,0.04)
+filt_gene <- annot_gene[which(annot_gene$gesum>lowthre),]
+filt_gene <- na.omit(filt_gene)
+filt_matrix <- filt_gene[,1:98]
 rownames(filt_matrix)<-filt_gene$Gene_Symbol
 #rownames(filt_matrix)<-rownames(filt_gene)
 #######use limma to do filtering
@@ -136,7 +137,7 @@ fit <- lmFit(filt_matrix, design)
 fit <- eBayes(fit)
 output <- topTable(fit, coef=2,n=Inf)
 #sum(output$adj.P.Val<0.05)
-sigout=output[output$adj.P.Val<0.05,]
+sigout <- output[output$adj.P.Val<0.05,]
 # I specify coef=2 because we are interested in the difference between groups, not the intercept.
 
 ############################## volcano plot
@@ -152,20 +153,20 @@ EnhancedVolcano(res_tableOE_ordered,
                 lab = res_tableOE_ordered$genelabels)
 
 #heatmap for significant genes
-hmdata=sigout[abs(sigout$logFC)>2.8,]
+hmdata <- sigout[abs(sigout$logFC)>2.8,]
 library(pheatmap)
 ind <- match(rownames(hmdata), rownames(filt_matrix))
-myre= filt_matrix[ind,]
-nm=meta$CN
-annotation_col = data.frame(SampleType = nm)
-rownames(annotation_col) = sample_lab
-colnames(myre) = sample_lab
+myre <- filt_matrix[ind,]
+nm <- meta$CN
+annotation_col <- data.frame(SampleType = nm)
+rownames(annotation_col) <- sample_lab
+colnames(myre) <- sample_lab
 pheatmap(myre, annotation_col = annotation_col,main = 'top 50 significant DEGs')
 
 #another way to do heatmap
 top.genes <- topTable(fit, coef=2, p.value = 0.05, number=50)
 heatmap_InputMatrix<-filt_matrix[(rownames(filt_matrix) %in%  rownames(top.genes)),]
-colnames(heatmap_InputMatrix)=sample_lab
+colnames(heatmap_InputMatrix) <- sample_lab
 pheatmap(heatmap_InputMatrix, annotation_col = annotation_col,main = 'top 50 significant DEGs')
 
 
@@ -253,7 +254,7 @@ wpgmtfile <- system.file("extdata/wikipathways-20180810-gmt-Homo_sapiens.gmt", p
 wpgene <- read.gmt(wpgmtfile)
 wp2gene <- wpgene
 
-path='/restricted/projectnb/camplab/home/jia_liu/stemaway_folder/stemaway/GSE21510_RAW/geneset.gmt'
+path='/home/jia_liu/stemaway_folder/stemaway/GSE21510_RAW/geneset.gmt'
 wpgmtfile <- read.gmt(path)
 wp2gene <- wpgmtfile
 
@@ -266,16 +267,16 @@ head(ewp)
 
 
 
-aa=setReadable(ewp, OrgDb = org.Hs.eg.db, keyType='ENTREZID')
+aa <- setReadable(ewp, OrgDb = org.Hs.eg.db, keyType='ENTREZID')
 barplot(aa)
 
 
-aa=sigout$logFC
-bb=as.character(gene.df$ENTREZID)
+aa <- sigout$logFC
+bb <- as.character(gene.df$ENTREZID)
 names(aa) <- bb
 aa <- sort(aa, decreasing = TRUE)
 ewp2 <- GSEA(aa, TERM2GENE = wpid2gene, TERM2NAME = wpid2name, verbose=FALSE)
-bb=setReadable(ewp2, OrgDb = org.Hs.eg.db, keyType='ENTREZID')
+bb <- setReadable(ewp2, OrgDb = org.Hs.eg.db, keyType='ENTREZID')
 saveRDS(bb)
 
 
@@ -287,3 +288,10 @@ myedox <- setReadable(myedo, 'org.Hs.eg.db', 'ENTREZID')
 cnetplot(edox, foldChange=geneList)
 cnetplot(edox, foldChange=geneList, circular = TRUE, colorEdge = TRUE)
 cowplot::plot_grid(p1, p2, p3, ncol=3, labels=LETTERS[1:3], rel_widths=c(.8, .8, 1.2))
+
+
+############gsea hallmark gene enrichr
+path='/home/jia_liu/stemaway_folder/stemaway/GSE21510_RAW/glyco.gmt'
+ga <- read.gmt(path)
+gsea_er <- enricher(gene,TERM2GENE = ga)
+gsea_er
